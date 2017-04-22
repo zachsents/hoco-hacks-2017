@@ -89,12 +89,13 @@ var attacker = null;
 function Attacker(){
     this.x = 80;
     this.speed = 0.5;
+    this.health = 100;
     
     this.update = function(){
-        if(this.leftPressed){
+        if(this.leftPressed && this.x > screenWidth / 20){
             this.x -= speed;
         }
-        if(this.rightPressed){
+        if(this.rightPressed && this.x < screenWidth * 19 / 20){
             this.x += speed;
         }
         
@@ -109,6 +110,26 @@ Attacker.update = function(){
     if(attacker !== null){
         attacker.update();
     }
+}
+
+var Earth = null;
+function Earth(){
+	this.x = screenWidth / 2;
+	this.y = 600;
+	this.radius = 300;
+	this.health = 100;
+	
+	this.hit = function(){
+		health -= 5;
+	}
+	this.update = function(){
+		return this.getUpdatePack();
+	}
+	this.getUpdatePack = function(){
+        return {};
+    }
+	
+	Earth = this;
 }
 
 var Player = {};
@@ -149,14 +170,21 @@ function Trash(x){
     this.update = function(){
     	y += speed;
     	this.earthCollision();
+    	this.clipOffscreen();
     	return this.getUpdatePack(); 
     }
     this.getUpdatePack = function(){
         return {};
     }
     this.earthCollision = function(){
-    	var dist = Math.sqrt((600 - y) * (600 - y) + (screenWidth / 2 - x) + (screenWidth / 2 - x));
-    	if(dist < 300)
+    	var dist = Math.sqrt((Earth.y - this.y) * (Earth.y - this.y) + (Earth.x - this.x) + (Earth.x - this.x));
+    	if(dist < Earth.radius) {
+    		delete Trash.list[this.id];
+    		Earth.hit();
+    	}
+    }
+    this.clipOffscreen = function() {
+    	if(this.x < 0 || this.x > screenWidth || this.y < 0 || this.y > screenHeight)
     		delete Trash.list[this.id];
     }
     Trash.list[this.id] = this;
