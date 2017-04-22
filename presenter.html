@@ -4,16 +4,10 @@
 	<img id="background" style="position:fixed; left:0%; width:100%; top:0%; height:100%" src="assets/background.jpg" />
 	<img id="earth" style="position:fixed; left:0%; width:100%; top:0%; height:100%" src="assets/earth.png">
 	<div style="position:absolute; right:.5em; width:4em; top:5%; height:90%; z-index:1">
-		<div style="position:absolute; left:0%; width:45%; height:100%; background-color:#000000"></div>
 		<div style="position:absolute; right:0%; width:45%; height:100%; background-color:#000000"></div>
-		
-		<div id="defBar" style="position:absolute; left:0%; width:45%; height:10%; border-style:0; background-color:#008800"></div>
-		<div id="atkBar" style="position:absolute; right:0%; width:45%; height:5%; border-style:0; background-color:#666666"></div>
-		
-		<img id="defFlag" style="position:absolute; left:0%; width:45%; top:9%; height:4%; z-index:2" src="assets/greenFlag.png" />
-		<img id="atkFlag" style="position:absolute; right:0%; width:45%; top:4%; height:4%; z-index:2" src="assets/greyFlag.png" />
+		<div id="atkBar" style="position:absolute; right:0%; width:45%; height:50%; bottom:0%; border-style:0; background-color:#008800"></div>
 	</div>
-	<canvas id="canv" style="position:absolute; left:0%; width:95%; top:0%; height:100%"></canvas>
+	<canvas id="canv" style="position:fixed; left:0%; width:95%; top:0%; height:100%"></canvas>
 </body>
 
 </html>
@@ -28,13 +22,19 @@ var objs = {
 	trash:[]
 }
 
+var earthHP = .5;
+
+function obItm(str) {
+	document.getElementById(str);
+}
+
 function getPic(str) {
 	var thg = new Image();
 	thg.src = "assets/"+str+".png";
 	return thg;
 }
 
-updatables = {
+var updatables = {
 	bullet:{
 		Pic:getPic("bullet"),
 		Width:6,
@@ -53,18 +53,17 @@ updatables = {
 }
 
 var socket = io();
-socket.on("attacker-join", function(atkPers){
+socket.on("init", function(initPack) {
+	if(initPack.attacker!==null) {
+		
+	}
+});
+
+socket.on("update", function(atkPers) {
 	
 });
 
-function obItm(str) {
-	document.getElementById(str);
-}
-
-function updateBar(typ,perc) {
-	obItm(typ+"Bar").style.height = perc*100+"%";
-	obItm(typ+"Flag").style.top = perc*100-1+"%";
-}
+var healthBar = obItm("healthBar");
 
 var canv = document.getElementById("canv");
 var ctx = canv.getContext("2d");
@@ -72,9 +71,14 @@ var canvasWidth = ctx.canvas.width;
 var canvasHeight = ctx.canvas.height;
 
 var atkr = getPic("attacker");
+var atkrWid = 20;
+
 var defr = getPic("defender");
+var defrWid = 20;
 
 setInterval(function (){
+	healthBar.style.height = earthHP*100+"%";
+	
 	ctx.clearRect(0,0, canvasWidth, canvasHeight);
 	
 	ctx.drawImage(atkr,canvasWidth*objs["attacker"]-atkrWid/2,0,atkrWid,20);
