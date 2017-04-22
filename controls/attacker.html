@@ -25,7 +25,7 @@
 			<tr>
 				<td id="attack" class="btn" rowspan="4">
 					<table class="icon-container"><tr><td>
-						<i class="fa fa-bomb"></i>
+						<i class="fa fa-trash"></i>
 					</td></tr></table>
 				</td>
 			</tr>
@@ -36,7 +36,10 @@
 	</body>
 </html>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script>
+
+var socket = io();
 
 $('#left .icon-container').mousedown(function() {
 	
