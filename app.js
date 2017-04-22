@@ -148,17 +148,25 @@ function Trash(x){
 	
     this.update = function(){
     	y += speed;
+    	this.earthCollision();
     	return this.getUpdatePack(); 
     }
     this.getUpdatePack = function(){
         return {};
     }
+    this.earthCollision = function(){
+    	var dist = Math.sqrt((600 - y) * (600 - y) + (screenWidth / 2 - x) + (screenWidth / 2 - x));
+    	if(dist < 300)
+    		delete Trash.list[this.id];
+    }
+    Trash.list[this.id] = this;
 }
 Trash.update = function(){
     for(var t in Trash.list){
         t.update();
     }
 }
+Trash.list = {};
 
 function gameTimer() {
     time += 1 / framerate;
