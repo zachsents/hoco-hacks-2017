@@ -64,7 +64,7 @@ var screenHeight = 270;
 
 var defender = null;
 function Defender(){
-    this.x = 80;
+    this.x = screenWidth / 2;
     this.speed = 0.5;
     
     this.update = function(){
@@ -91,7 +91,7 @@ Defender.update = function(){
 
 var attacker = null;
 function Attacker(){
-    this.x = 80;
+    this.x = screenWidth / 2;
     this.speed = 0.5;
     
     this.update = function(){
@@ -147,7 +147,7 @@ Player.onConnect = function (socket) {
 
 function Bullet(x){
     this.id = Math.random();
-    this.speed = 1;
+    this.speed = -1;
     this.x = x;
     this.y = screenHeight;
     
@@ -216,6 +216,7 @@ function Trash(x){
     this.update = function(){
     	y += speed;
     	this.earthCollision();
+    	this.treeCollision();
     	this.clipOffscreen();
     	return this.getUpdatePack(); 
     }
@@ -228,6 +229,17 @@ function Trash(x){
     		delete Trash.list[this.id];
     		earth.hit();
     	}
+    }
+    this.treeCollision = function(){
+    	for(var i in Tree.list){
+            var t = Tree.list[i];
+            var distance = Math.sqrt((Math.pow((t.x - this.x), 2) + Math.pow(t.y - this.y, 2)));
+            if(distance <= t.radius){
+                t.hit();
+                delete Trash.list[t.id];
+                return true;
+            }
+        }
     }
     this.clipOffscreen = function() {
     	if(this.x < 0 || this.x > screenWidth || this.y < 0 || this.y > screenHeight)
@@ -248,7 +260,7 @@ function Tree(x){
 	this.x = x;
 	this.y = 0;
 	this.health = 100;
-	this.width = 10;
+	this.radius = 10;
 	
 	this.hit = function(){
 		health -= 40;
@@ -278,15 +290,16 @@ function gameTimer() {
 var initPack = {
     attacker: null,
     defender: null,
+    earth: null,
     bullets: [],
     trash: [],
+    trees: []
 };
 
 var removePack = {
-    attacker: null,
-    defender: null,
     bullets: [],
     trash: [],
+    trees: []
 };
 
 setInterval(function () {
@@ -307,6 +320,7 @@ setInterval(function () {
     initPack = {
         attacker: null,
         defender: null,
+        earth: null,
         bullets: [],
         trash: [],
     };
@@ -314,6 +328,7 @@ setInterval(function () {
     removePack = {
         bullets: [],
         trash: [],
+        trees: []
     };
 
 }, 1000 / framerate);
