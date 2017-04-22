@@ -4,6 +4,7 @@
 		<link rel="stylesheet" type="text/css" href="/controls/font-awesome.min.css">
 		<link href="https://fonts.googleapis.com/css?family=Rubik+Mono+One" rel="stylesheet">
 		<link rel="stylesheet" type="text/css" href="/controls/style.css">
+		<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 	</head>
 	<body>
 		<table id="control-table">
@@ -44,25 +45,27 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
 
+var socket = io();
+
 $('#left .icon-container').mousedown(function() {
-	
+	socket.emit('left-pressed', 'defender', true);
 });
 $('#left .icon-container').mouseup(function() {
-	
+	socket.emit('left-pressed', 'defender', false);
 });
 
 $('#right .icon-container').mousedown(function() {
-	
+	socket.emit('right-pressed', 'defender', true);
 });
 $('#right .icon-container').mouseup(function() {
-	
+	socket.emit('right-pressed', 'defender', false);
 });
 
 $('#shoot .icon-container').click(function() {
-	
+	socket.emit('shoot');
 });
 $('#plant .icon-container').click(function() {
-	
+	socket.emit('plant');
 });
 
 </script>
