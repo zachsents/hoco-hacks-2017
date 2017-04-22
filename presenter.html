@@ -54,9 +54,6 @@ var updatables = {
 
 var socket = io();
 socket.on("init", function(initPack) {
-	if(initPack.attacker!==null) {
-		
-	}
 });
 
 socket.on("update", function(atkPers) {
@@ -84,8 +81,8 @@ setInterval(function (){
 	ctx.drawImage(atkr,canvasWidth*objs["attacker"]-atkrWid/2,0,atkrWid,20);
 	ctx.drawImage(defr,canvasWidth*objs["defender"]-defrWid/2,0,defrWid,20);
 	
-	for(nam in updatables) {
-		for(v in objs[nam]) {
+	for(var nam in updatables) {
+		for(var v in objs[nam]) {
 			var thg = objs[nam][v];
 			ctx.drawImage(updatables[nam].Pic, thg.x*canvasWidth-updatables[nam].Width/2, thg.y*canvasHeight-updatables[nam].Height/2, updatables[nam].Width, updatables[nam].Height);
 		}
