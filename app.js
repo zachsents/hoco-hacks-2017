@@ -9,28 +9,26 @@ app.get(`/`, function(req, res) {
         res.sendFile(`${__dirname}/controls/defender.html`);
     }else if(counter == 1){
         res.sendFile(`${__dirname}/controls/attacker.html`);
+    }else{
+        res.sendFile(`${__dirname}/leaderboard.html`);
     }
 });
-app.use(`/client`, express.static(`${__dirname}/client`));
+app.use(`/controls`, express.static(`${__dirname}/controls`));
 
-serv.listen(process.env.PORT || 2000);
-console.log(`Server started.`);
+serv.listen(process.env.PORT || 2000, function(){
+    console.log(`Server started.`);
+});
 
 var SOCKET_LIST = [];
-var DISCONNECTED_LIST = [];
-var io = require(`socket.io`)(serv, {});
-io.sockets.on(`connection`, function (socket) {
-    counter += 1;
+var io = require(`socket.io`)(serv);
+
+io.on(`connection`, function (socket) {
+    console.log(counter);
     if(counter < 2){
     socket.id = counter;
+    counter += 1;
     SOCKET_LIST[socket.id] = socket;
     Player.onConnect(socket);
-
-    socket.on(`disconnect`, function () {
-        delete SOCKET_LIST[socket.id];
-        DISCONNECTED_LIST.push(socket.id);
-        Player.onDisconnect(socket);
-    });
     }
 });
 
