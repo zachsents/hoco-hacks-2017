@@ -72,7 +72,6 @@ function Defender(){
         if(this.rightPressed && this.x < 0.95){
             this.x += this.speed;
         }
-        
         return this.getUpdatePack();
     }
     this.getUpdatePack = function(){
@@ -87,7 +86,7 @@ function Defender(){
 }
 Defender.update = function(){
     if(defender !== null){
-        defender.update();
+        return defender.update();
     }
 }
 
@@ -118,7 +117,7 @@ function Attacker(){
 }
 Attacker.update = function(){
     if(attacker !== null){
-        attacker.update();
+        return attacker.update();
     }
 }
 
@@ -209,9 +208,11 @@ function Bullet(x){
     initPack.bullets.push(this.getInitPack);
 }
 Bullet.update = function(){
+    var bullets = [];
     for(var b in Bullet.list){
-        b.update();
+        bullets.push(b.update());
     }
+    return bullets;
 };
 Bullet.list = {};
 
@@ -257,9 +258,11 @@ function Trash(x){
     Trash.list[this.id] = this;
 }
 Trash.update = function(){
+    var trash = [];
     for(var t in Trash.list){
-        t.update();
+        trash.push(t.update());
     }
+    return trash;
 }
 Trash.list = {};
 
