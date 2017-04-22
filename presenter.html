@@ -21,6 +21,8 @@ var objs = {
 	trash:[]
 }
 
+var earthHP = .5;
+
 function obItm(str) {
 	document.getElementById(str);
 }
@@ -52,7 +54,7 @@ var updatables = {
 var socket = io();
 socket.on("init", function(initPack) {
 	if(initPack.attacker!==null) {
-	
+		
 	}
 });
 
@@ -68,10 +70,13 @@ var canvasWidth = ctx.canvas.width;
 var canvasHeight = ctx.canvas.height;
 
 var atkr = getPic("attacker");
+var atkrWid = 20;
+
 var defr = getPic("defender");
+var defrWid = 20;
 
 setInterval(function (){
-	healthBar.style.height = perc*100+"%";
+	healthBar.style.height = earthHP*100+"%";
 	
 	ctx.clearRect(0,0, canvasWidth, canvasHeight);
 	
