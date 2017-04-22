@@ -46,6 +46,7 @@ $('#left .icon-container').mousedown(function() {
 });
 $('#left .icon-container').mouseup(function() {
 	socket.emit('left-pressed', 'attacker', false);
+	fix(this);
 });
 
 $('#right .icon-container').mousedown(function() {
@@ -53,10 +54,20 @@ $('#right .icon-container').mousedown(function() {
 });
 $('#right .icon-container').mouseup(function() {
 	socket.emit('right-pressed', 'attacker', false);
+	fix(this);
 });
 
 $('#attack .icon-container').click(function() {
 	socket.emit('shoot-trash');
+	fix(this);
 });
+
+function fix(el)
+{
+    var par = el.parentNode;
+    var next = el.nextSibling;
+    par.removeChild(el);
+    setTimeout(function() {par.insertBefore(el, next);}, 0)
+}
 
 </script>
