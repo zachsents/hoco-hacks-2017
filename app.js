@@ -44,11 +44,11 @@ io.on(`connection`, function (socket) {
             attacker.rightPressed = isDown;
         }
     });
-    socket.on(`shoot-trash`, function(){
-        Trash(defender.x);
-    });
     socket.on(`shoot`, function(){
-        
+        Bullet(defender.x);
+    });
+    socket.on(`attack`, function(){
+    	Trash(defender.x);
     });
     socket.on(`plant`, function(){
         
@@ -140,7 +140,7 @@ Player.onConnect = function (socket) {
     }
 };
 
-function Bullet(){
+function Bullet(x){
 	this.id = Math.random();
 	this.speed = -1;
 	this.x = x;
