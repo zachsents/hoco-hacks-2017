@@ -45,7 +45,7 @@ io.on(`connection`, function (socket) {
         }
     });
     socket.on(`shoot-trash`, function(){
-        
+        Trash(defender.x);
     });
     socket.on(`shoot`, function(){
         
@@ -111,7 +111,7 @@ Attacker.update = function(){
     }
 }
 
-var Earth = null;
+var earth = null;
 function Earth(){
 	this.x = screenWidth / 2;
 	this.y = 600;
@@ -128,7 +128,7 @@ function Earth(){
         return {};
     }
 	
-	Earth = this;
+	earth = this;
 }
 
 var Player = {};
@@ -176,10 +176,10 @@ function Trash(x){
         return {};
     }
     this.earthCollision = function(){
-    	var dist = Math.sqrt((Earth.y - this.y) * (Earth.y - this.y) + (Earth.x - this.x) + (Earth.x - this.x));
-    	if(dist < Earth.radius) {
+    	var dist = Math.sqrt((earth.y - this.y) * (earth.y - this.y) + (earth.x - this.x) + (earth.x - this.x));
+    	if(dist < earth.radius) {
     		delete Trash.list[this.id];
-    		Earth.hit();
+    		earth.hit();
     	}
     }
     this.clipOffscreen = function() {
