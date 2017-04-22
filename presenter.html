@@ -12,7 +12,9 @@
 
 </html>
 
-<script src="https://cdn.socket.io/socket.io-1.4.5.js">
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+
+<script>
 
 var objs = {
 	attacker:.5,
@@ -23,10 +25,6 @@ var objs = {
 }
 
 var earthHP = .5;
-
-function obItm(str) {
-	document.getElementById(str);
-}
 
 function getPic(str) {
 	var thg = new Image();
@@ -54,13 +52,57 @@ var updatables = {
 
 var socket = io();
 socket.on("init", function(initPack) {
+	if(initPack.attacker){
+		objs.attacker = initPack.attacker.x;
+	}
+	if(initPack.defender){
+		objs.defender = initPack.attacker.x;
+	}
+	if(initPack.trash){
+		for(var t in initPack.trash){
+			objs.trash.push(initPack.trash);
+		}
+	}
+	if(initPack.bullets){
+		for(var t in initPack.bullets){
+			objs.bullets.push(initPack.bullets);
+		}
+	}
 });
 
-socket.on("update", function(atkPers) {
-	
+socket.on("update", function(updatePack) {
+	if(updatePack.attacker){
+		objs.attacker = updatePack.attacker.x;
+	}
+	if(updatePack.defender){
+		objs.defender = updatePack.attacker.x;
+	}
+	if(updatePack.earth){
+		earthHP = updatePack.earth.health;
+	}
+	if(updatePack.trash){
+		for(var i in objs.trash){
+			for(var j in updatePack.trash){
+				if(updatePack.trash[j].id === objs.trash[i].id){
+					objs.trash[i].x = updatePack.trash[j].x;
+					objs.trash[i].y = updatePack.trash[j].y;
+				}
+			}
+		}
+	}
+	if(updatePack.bullets){
+		for(var i in objs.bullets){
+			for(var j in updatePack.bullets){
+				if(updatePack.bullets[j].id === objs.bullets[i].id){
+					objs.bullets[i].x = updatePack.bullets[j].x;
+					objs.bullets[i].y = updatePack.bullets[j].y;
+				}
+			}
+		}
+	}
 });
 
-var healthBar = obItm("healthBar");
+var healthBar = document.getElementById("healthBar");
 
 var canv = document.getElementById("canv");
 var ctx = canv.getContext("2d");
