@@ -121,8 +121,14 @@ Player.onConnect = function (socket) {
 };
 
 function Bullet(){
+	this.id = Math.random();
+	this.speed = -1;
+	this.x = x;
+	this.y = 0;
+	
     this.update = function(){
-       return this.getUpdatePack(); 
+    	y += speed;
+    	return this.getUpdatePack(); 
     }
     this.getUpdatePack = function(){
         return {};
@@ -134,9 +140,15 @@ Bullet.update = function(){
     }
 }
 
-function Trash(){
+function Trash(x){
+	this.id = Math.random();
+	this.speed = 1;
+	this.x = x;
+	this.y = 0;
+	
     this.update = function(){
-       return this.getUpdatePack(); 
+    	y += speed;
+    	return this.getUpdatePack(); 
     }
     this.getUpdatePack = function(){
         return {};
