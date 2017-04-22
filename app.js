@@ -10,10 +10,11 @@ app.get(`/`, function(req, res) {
     }else if(counter == 1){
         res.sendFile(`${__dirname}/controls/attacker.html`);
     }else{
-        res.sendFile(`${__dirname}/leaderboard.html`);
+        res.sendFile(`${__dirname}/presenter.html`);
     }
 });
 app.use(`/controls`, express.static(`${__dirname}/controls`));
+app.use(`/assets`, express.static(`${__dirname}/assets`));
 
 serv.listen(process.env.PORT || 2000, function(){
     console.log(`Server started.`);
@@ -69,19 +70,23 @@ function Defender(){
     
     this.update = function(){
         if(this.leftPressed){
-            this.x -= speed;
+            this.x -= this.speed;
         }
         if(this.rightPressed){
-            this.x += speed;
+            this.x += this.speed;
         }
         
         return this.getUpdatePack();
     }
     this.getUpdatePack = function(){
-        return {};
+        return {x: this.x,};
     }
+    this.getInitPack = function(){
+        return {x: this.x,};
+    }
+    
     defender = this;
-    initPack.defender = defender;
+    initPack.defender = this.getInitPack();
 }
 Defender.update = function(){
     if(defender !== null){
@@ -96,19 +101,23 @@ function Attacker(){
     
     this.update = function(){
         if(this.leftPressed && this.x > screenWidth / 20){
-            this.x -= speed;
+            this.x -= this.speed;
         }
         if(this.rightPressed && this.x < screenWidth * 19 / 20){
-            this.x += speed;
+            this.x += this.speed;
         }
         
         return this.getUpdatePack();
     }
     this.getUpdatePack = function(){
-        return {};
+        return {x: this.x,};
     }
+    this.getInitPack = function(){
+        return {x: this.x,};
+    }
+    
     attacker = this;
-    initPack.attacker = attacker;
+    initPack.attacker = this.getInitPack();
 }
 Attacker.update = function(){
     if(attacker !== null){
@@ -124,13 +133,13 @@ function Earth(){
 	this.health = 100;
 	
 	this.hit = function(){
-		health -= 5;
+		this.health -= 5;
 	}
 	this.update = function(){
 		return this.getUpdatePack();
 	}
 	this.getUpdatePack = function(){
-        return {};
+        return {health: this.health,};
     }
 	
 	earth = this;
@@ -214,7 +223,7 @@ function Trash(x){
 	this.y = 0;
 	
     this.update = function(){
-    	y += speed;
+    	this.y += this.speed;
     	this.earthCollision();
     	this.treeCollision();
     	this.clipOffscreen();
@@ -263,10 +272,10 @@ function Tree(x){
 	this.radius = 10;
 	
 	this.hit = function(){
-		health -= 40;
+		this.health -= 40;
 	}
     this.update = function(){
-    	if(health <= 0)
+    	if(ithis.health <= 0)
     		delete Tree.list[this.id];
     	return this.getUpdatePack(); 
     }
