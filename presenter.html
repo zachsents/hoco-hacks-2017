@@ -63,9 +63,9 @@ socket.on("init", function(initPack) {
 			objs.trash.push(initPack.trash);
 		}
 	}
-	if(initPack.bullets){
-		for(var t in initPack.bullets){
-			objs.bullets.push(initPack.bullets);
+	if(initPack.bullet){
+		for(var t in initPack.bullet){
+			objs.bullet.push(initPack.bullet);
 		}
 	}
 });
@@ -90,12 +90,12 @@ socket.on("update", function(updatePack) {
 			}
 		}
 	}
-	if(updatePack.bullets){
-		for(var i in objs.bullets){
-			for(var j in updatePack.bullets){
-				if(updatePack.bullets[j].id === objs.bullets[i].id){
-					objs.bullets[i].x = updatePack.bullets[j].x;
-					objs.bullets[i].y = updatePack.bullets[j].y;
+	if(updatePack.bullet){
+		for(var i in objs.bullet){
+			for(var j in updatePack.bullet){
+				if(updatePack.bullet[j].id === objs.bullet[i].id){
+					objs.bullet[i].x = updatePack.bullet[j].x;
+					objs.bullet[i].y = updatePack.bullet[j].y;
 				}
 			}
 		}
