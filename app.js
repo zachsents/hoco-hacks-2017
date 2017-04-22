@@ -44,11 +44,11 @@ io.on(`connection`, function (socket) {
             attacker.rightPressed = isDown;
         }
     });
-    socket.on(`shoot-trash`, function(){
-        attacker.shootTrash();
-    });
     socket.on(`shoot`, function(){
-        
+        Bullet(defender.x);
+    });
+    socket.on(`attack`, function(){
+    	Trash(defender.x);
     });
     socket.on(`plant`, function(){
         
@@ -95,10 +95,10 @@ function Attacker(){
     this.speed = 0.5;
     
     this.update = function(){
-        if(this.leftPressed){
+        if(this.leftPressed && this.x > screenWidth / 20){
             this.x -= speed;
         }
-        if(this.rightPressed){
+        if(this.rightPressed && this.x < screenWidth * 19 / 20){
             this.x += speed;
         }
         
@@ -114,6 +114,26 @@ Attacker.update = function(){
     if(attacker !== null){
         attacker.update();
     }
+}
+
+var earth = null;
+function Earth(){
+	this.x = screenWidth / 2;
+	this.y = 600;
+	this.radius = 300;
+	this.health = 100;
+	
+	this.hit = function(){
+		health -= 5;
+	}
+	this.update = function(){
+		return this.getUpdatePack();
+	}
+	this.getUpdatePack = function(){
+        return {};
+    }
+	
+	earth = this;
 }
 
 var Player = {};
@@ -163,6 +183,7 @@ function Bullet(x){
     this.update = function(){
        return this.getUpdatePack(); 
     };
+
     this.getUpdatePack = function(){
         return {
             x: this.x,
@@ -187,21 +208,33 @@ Bullet.update = function(){
 };
 Bullet.list = {};
 
-function Trash(){
-    this.id = Math.random();
-    this.speed = 1;
-    
-    this.updatePosition = function(){
-        
-    }
-    
+function Trash(x){
+	this.id = Math.random();
+	this.speed = 1;
+	this.x = x;
+	this.y = 0;
+	
     this.update = function(){
-       return this.getUpdatePack(); 
+    	y += speed;
+    	this.earthCollision();
+    	this.clipOffscreen();
+    	return this.getUpdatePack(); 
     }
     this.getUpdatePack = function(){
         return {};
     }
-    
+    this.earthCollision = function(){
+    	var dist = Math.sqrt((earth.y - this.y) * (earth.y - this.y) + (earth.x - this.x) + (earth.x - this.x));
+    	if(dist < earth.radius) {
+    		delete Trash.list[this.id];
+    		earth.hit();
+    	}
+    }
+    this.clipOffscreen = function() {
+    	if(this.x < 0 || this.x > screenWidth || this.y < 0 || this.y > screenHeight)
+    		delete Trash.list[this.id];
+    }
+
     Trash.list[this.id] = this;
 }
 Trash.update = function(){
