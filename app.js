@@ -59,6 +59,9 @@ var framerate = 1000 / 40;
 var newEntities = false;
 var time;
 
+var screenWidth = 500;
+var screenHeight = 270;
+
 var defender = null;
 function Defender(){
     this.x = 80;
@@ -78,6 +81,7 @@ function Defender(){
         return {};
     }
     defender = this;
+    initPack.defender = defender;
 }
 Defender.update = function(){
     if(defender !== null){
@@ -104,6 +108,7 @@ function Attacker(){
         return {};
     }
     attacker = this;
+    initPack.attacker = attacker;
 }
 Attacker.update = function(){
     if(attacker !== null){
@@ -141,24 +146,66 @@ Player.onConnect = function (socket) {
 };
 
 function Bullet(x){
-	this.id = Math.random();
-	this.speed = -1;
-	this.x = x;
-	this.y = 0;
-	
+    this.id = Math.random();
+    this.speed = 1;
+    this.x = x;
+    this.y = screenHeight;
+    
+    this.updatePosition = function(){
+        if(!this.checkForCollision()){
+            this.y -= this.speed;
+        }
+        // if has been deleted
+        if(!Trash.list.hasOwnProperty(this.id)){
+           removePack.bullet.push(this.id);
+        }
+    };
+    
+    this.checkForCollision = function(){
+        // if goes off screen
+        if(this.y <= 0){
+            delete Bullet.list[this.id];
+            return true;
+        }
+        
+        for(var i in Trash.list){
+            var t = Trash.list[i];
+            var distance = Math.sqrt((Math.pow((t.x - this.x), 2) + Math.pow(t.y - this.y, 2)));
+            if(distance <= 15){
+                delete Bullet.list[this.id];
+                delete Trash.list[t.id];
+                return true;
+            }
+        }
+        return false;
+    };
+    
     this.update = function(){
-    	y += speed;
-    	return this.getUpdatePack(); 
-    }
+       return this.getUpdatePack(); 
+    };
     this.getUpdatePack = function(){
-        return {};
-    }
+        return {
+            x: this.x,
+            y: this.y,
+        };
+    };
+    
+    this.getInitPack = function(){
+        return {
+            id: this.id,
+            x: this.x,
+            y: this.y,
+        };
+    };
+    
+    initPack.bullets.push(this.getInitPack);
 }
 Bullet.update = function(){
     for(var b in Bullet.list){
         b.update();
     }
-}
+};
+Bullet.list = {};
 
 function Trash(x){
 	this.id = Math.random();
@@ -199,11 +246,23 @@ function gameTimer() {
     time += 1 / framerate;
 }
 
+var initPack = {
+    attacker: null,
+    defender: null,
+    bullets: [],
+    trash: [],
+};
+
+var removePack = {
+    attacker: null,
+    defender: null,
+    bullets: [],
+    trash: [],
+};
+
 setInterval(function () {
     gameTimer();
 
-    var initPack = {};
-    
     var pack = {
         defender: Defender.update(),
         attacker: Attacker.update(),
@@ -211,11 +270,21 @@ setInterval(function () {
         trash: Trash.update(),
     };
     
-    var removePack ={};
-    
     io.emit(`init`, initPack);
     io.emit(`update`, pack);
     io.emit(`remove`, removePack);
+    
+    
+    initPack = {
+        attacker: null,
+        defender: null,
+        bullets: [],
+        trash: [],
+    };
+
+    removePack = {
+        bullets: [],
+        trash: [],
+    };
 
 }, 1000 / framerate);
-
