@@ -89,7 +89,6 @@ var attacker = null;
 function Attacker(){
     this.x = 80;
     this.speed = 0.5;
-    this.health = 100;
     
     this.update = function(){
         if(this.leftPressed && this.x > screenWidth / 20){
