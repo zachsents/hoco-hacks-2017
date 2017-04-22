@@ -60,19 +60,16 @@ var framerate = 1000 / 40;
 var newEntities = false;
 var time;
 
-var screenWidth = 500;
-var screenHeight = 270;
-
 var defender = null;
 function Defender(){
-    this.x = screenWidth / 2;
-    this.speed = 0.5;
+    this.x = 0.5;
+    this.speed = 0.01;
     
     this.update = function(){
-        if(this.leftPressed){
+        if(this.leftPressed && this.x > 0.05){
             this.x -= this.speed;
         }
-        if(this.rightPressed){
+        if(this.rightPressed && this.x < 0.95){
             this.x += this.speed;
         }
         
@@ -96,14 +93,14 @@ Defender.update = function(){
 
 var attacker = null;
 function Attacker(){
-    this.x = screenWidth / 2;
-    this.speed = 0.5;
+    this.x = 0.5;
+    this.speed = 0.01;
     
     this.update = function(){
-        if(this.leftPressed && this.x > screenWidth / 20){
+        if(this.leftPressed && this.x > 0.05){
             this.x -= this.speed;
         }
-        if(this.rightPressed && this.x < screenWidth * 19 / 20){
+        if(this.rightPressed && this.x < 0.95){
             this.x += this.speed;
         }
         
@@ -127,9 +124,9 @@ Attacker.update = function(){
 
 var earth = null;
 function Earth(){
-	this.x = screenWidth / 2;
-	this.y = 600;
-	this.radius = 300;
+	this.x = 0.5;
+	this.y = 1.3;
+	this.radius = 0.5;
 	this.health = 100;
 	
 	this.hit = function(){
@@ -157,9 +154,9 @@ Player.onConnect = function (socket) {
 
 function Bullet(x){
     this.id = Math.random();
-    this.speed = -1;
+    this.speed = -0.01;
     this.x = x;
-    this.y = screenHeight;
+    this.y = 1;
     
     this.updatePosition = function(){
         if(!this.checkForCollision()){
@@ -220,7 +217,7 @@ Bullet.list = {};
 
 function Trash(x){
 	this.id = Math.random();
-	this.speed = 1;
+	this.speed = 0.01;
 	this.x = x;
 	this.y = 0;
 	
@@ -253,7 +250,7 @@ function Trash(x){
         }
     }
     this.clipOffscreen = function() {
-    	if(this.x < 0 || this.x > screenWidth || this.y < 0 || this.y > screenHeight)
+    	if(this.x < 0 || this.x > 1 || this.y < 0 || this.y > 1)
     		delete Trash.list[this.id];
     }
 
@@ -272,7 +269,7 @@ function Tree(x){
 	this.x = x;
 	this.y = 0;
 	this.health = 100;
-	this.radius = 10;
+	this.radius = 0.1;
 	
 	this.hit = function(){
 		this.health -= 40;
