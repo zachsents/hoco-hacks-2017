@@ -48,17 +48,17 @@
 var socket = io();
 
 $('#left .icon-container').mousedown(function() {
-	socket.emit('left-pressed', true);
+	socket.emit('left-pressed', 'defender', true);
 });
 $('#left .icon-container').mouseup(function() {
-	socket.emit('left-pressed', false);
+	socket.emit('left-pressed', 'defender', false);
 });
 
 $('#right .icon-container').mousedown(function() {
-	socket.emit('right-pressed', true);
+	socket.emit('right-pressed', 'defender', true);
 });
 $('#right .icon-container').mouseup(function() {
-	socket.emit('right-pressed', false);
+	socket.emit('right-pressed', 'defender', false);
 });
 
 $('#shoot .icon-container').click(function() {
