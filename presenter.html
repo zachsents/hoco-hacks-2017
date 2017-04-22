@@ -1,0 +1,62 @@
+<html>
+
+<body>
+	<img id="background" style="position:fixed; left:0%; width:100%; top:0%; height:100%" src="assets/background.png" />
+	<div style="position:absolute; right:.5em; width:4em; top:5%; height:90%; z-index:1">
+		<div style="position:absolute; left:0%; width:45%; height:100%; background-color:#000000"></div>
+		<div style="position:absolute; right:0%; width:45%; height:100%; background-color:#000000"></div>
+		
+		<div id="defBar" style="position:absolute; left:0%; width:45%; height:10%; border-style:0; background-color:#008800"></div>
+		<div id="atkBar" style="position:absolute; right:0%; width:45%; height:5%; border-style:0; background-color:#666666"></div>
+		
+		<img id="defFlag" style="position:absolute; left:0%; width:45%; top:9%; height:4%; z-index:2" src="assets/greenFlag.png" />
+		<img id="atkFlag" style="position:absolute; right:0%; width:45%; top:4%; height:4%; z-index:2" src="assets/greyFlag.png" />
+	</div>
+	<canvas id="canv" style="position:absolute; left:0%; width:95%; top:0%; height:100%"></canvas>
+</body>
+
+</html>
+
+<script src="https://cdn.socket.io/socket.io-1.4.5.js">
+
+var objs = {
+	attacker:"",
+	defender:"",
+	bullets:[],
+	trash:[]
+}
+
+var socket = io();
+socket.on("attacker-join", function(atkPers){
+	
+});
+
+function obItm(str) {
+	document.getElementById(str);
+}
+
+function updateBar(typ,perc) {
+	obItm(typ+"Bar").style.height = perc*100+"%";
+	obItm(typ+"Flag").style.top = perc*100-1+"%";
+}
+
+var canv = document.getElementById("canv");
+
+var ctx = canv.getContext("2d");
+var canvasWidth = ctx.canvas.width;
+var canvasHeight = ctx.canvas.height;
+
+
+var greenFlag = new Image();
+greenFlag.src = "/";
+
+ctx.drawImage(greenFlag);
+
+setInterval(function (){
+	ctx.clearRect(0,0, canvasWidth, canvasHeight);
+	for(x in objs["bullets"]) {
+		ctx.drawImage(x.)
+	}
+},40);
+
+</script>
