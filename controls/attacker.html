@@ -42,21 +42,21 @@
 var socket = io();
 
 $('#left .icon-container').mousedown(function() {
-	
+	socket.emit('left-pressed', true);
 });
 $('#left .icon-container').mouseup(function() {
-	
+	socket.emit('left-pressed', false);
 });
 
 $('#right .icon-container').mousedown(function() {
-	
+	socket.emit('right-pressed', true);
 });
 $('#right .icon-container').mouseup(function() {
-	
+	socket.emit('right-pressed', false);
 });
 
 $('#attack .icon-container').click(function() {
-	
+	socket.emit('attack');
 });
 
 </script>

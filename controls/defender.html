@@ -44,25 +44,27 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
 
+var socket = io();
+
 $('#left .icon-container').mousedown(function() {
-	
+	socket.emit('left-pressed', true);
 });
 $('#left .icon-container').mouseup(function() {
-	
+	socket.emit('left-pressed', false);
 });
 
 $('#right .icon-container').mousedown(function() {
-	
+	socket.emit('right-pressed', true);
 });
 $('#right .icon-container').mouseup(function() {
-	
+	socket.emit('right-pressed', false);
 });
 
 $('#shoot .icon-container').click(function() {
-	
+	socket.emit('shoot');
 });
 $('#plant .icon-container').click(function() {
-	
+	socket.emit('plant');
 });
 
 </script>
