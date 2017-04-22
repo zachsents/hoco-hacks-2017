@@ -25,11 +25,34 @@ var io = require(`socket.io`)(serv);
 io.on(`connection`, function (socket) {
     console.log(counter);
     if(counter < 2){
-    socket.id = counter;
-    counter += 1;
-    SOCKET_LIST[socket.id] = socket;
-    Player.onConnect(socket);
+        socket.id = counter;
+        counter += 1;
+        SOCKET_LIST[socket.id] = socket;
+        Player.onConnect(socket);
     }
+    socket.on(`left-pressed`, function(type, isDown){
+        if(type === `defender`){
+            defender.leftPressed = isDown; 
+        } else if(type === `attacker`){
+            attacker.leftPressed = isDown;
+        }
+    });
+    socket.on(`right-pressed`, function(type, isDown){
+        if(type === `defender`){
+            defender.rightPressed = isDown; 
+        } else if(type === `attacker`){
+            attacker.rightPressed = isDown;
+        }
+    });
+    socket.on(`shoot-trash`, function(){
+        
+    });
+    socket.on(`shoot`, function(){
+        
+    });
+    socket.on(`plant`, function(){
+        
+    });
 });
 
 var framerate = 1000 / 40;
@@ -38,7 +61,17 @@ var time;
 
 var defender = null;
 function Defender(){
+    this.x = 80;
+    this.speed = 0.5;
+    
     this.update = function(){
+        if(this.leftPressed){
+            this.x -= speed;
+        }
+        if(this.rightPressed){
+            this.x += speed;
+        }
+        
         return this.getUpdatePack();
     }
     this.getUpdatePack = function(){
@@ -54,7 +87,17 @@ Defender.update = function(){
 
 var attacker = null;
 function Attacker(){
+    this.x = 80;
+    this.speed = 0.5;
+    
     this.update = function(){
+        if(this.leftPressed){
+            this.x -= speed;
+        }
+        if(this.rightPressed){
+            this.x += speed;
+        }
+        
         return this.getUpdatePack();
     }
     this.getUpdatePack = function(){
@@ -128,3 +171,4 @@ setInterval(function () {
     io.emit(`remove`, removePack);
 
 }, 1000 / framerate);
+
