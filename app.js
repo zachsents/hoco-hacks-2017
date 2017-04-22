@@ -48,10 +48,10 @@ io.on(`connection`, function (socket) {
         Bullet(defender.x);
     });
     socket.on(`attack`, function(){
-    	Trash(defender.x);
+    	Trash(attacker.x);
     });
     socket.on(`plant`, function(){
-        
+        Tree(defender.x);
     });
 });
 
@@ -241,6 +241,35 @@ Trash.update = function(){
     }
 }
 Trash.list = {};
+
+
+function Tree(x){
+	this.id = Math.random();
+	this.x = x;
+	this.y = 0;
+	this.health = 100;
+	this.width = 10;
+	
+	this.hit = function(){
+		health -= 40;
+	}
+    this.update = function(){
+    	if(health <= 0)
+    		delete Tree.list[this.id];
+    	return this.getUpdatePack(); 
+    }
+    this.getUpdatePack = function(){
+        return {};
+    }
+    Tree.list[this.id] = this;
+}
+Tree.update = function(){
+    for(var t in Trash.list){
+        t.update();
+    }
+}
+Tree.list = {};
+
 
 function gameTimer() {
     time += 1 / framerate;
