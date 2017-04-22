@@ -143,6 +143,7 @@ function Earth(){
     }
 	
 	earth = this;
+	initPack.earth = this.getInitPack();
 }
 
 var Player = {};
