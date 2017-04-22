@@ -75,6 +75,7 @@ var atkrWid = 20;
 
 var defr = getPic("defender");
 var defrWid = 20;
+var defrHei = 20;
 
 setInterval(function (){
 	healthBar.style.height = earthHP*100+"%";
@@ -82,7 +83,7 @@ setInterval(function (){
 	ctx.clearRect(0,0, canvasWidth, canvasHeight);
 	
 	ctx.drawImage(atkr,canvasWidth*objs["attacker"]-atkrWid/2,0,atkrWid,20);
-	ctx.drawImage(defr,canvasWidth*objs["defender"]-defrWid/2,0,defrWid,20);
+	ctx.drawImage(defr,canvasWidth*objs["defender"]-defrWid/2,canvasHeight-defrHei,defrWid,defrHei);
 	
 	for(nam in updatables) {
 		for(v in objs[nam]) {
