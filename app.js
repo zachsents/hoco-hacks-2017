@@ -46,13 +46,13 @@ io.on(`connection`, function (socket) {
         }
     });
     socket.on(`shoot`, function(){
-        Bullet(defender.x);
+        new Bullet(defender.x);
     });
     socket.on(`attack`, function(){
-    	Trash(attacker.x);
+    	new Trash(attacker.x);
     });
     socket.on(`plant`, function(){
-        Tree(defender.x);
+        new Tree(defender.x);
     });
 });
 
@@ -64,6 +64,8 @@ var defender = null;
 function Defender(){
     this.x = 0.5;
     this.speed = 0.01;
+    this.leftPressed =false; 
+    this.rightPressed = false;
     
     this.update = function(){
         if(this.leftPressed && this.x > 0.05){
@@ -85,7 +87,7 @@ function Defender(){
     initPack.defender = this.getInitPack();
 }
 Defender.update = function(){
-    if(defender !== null){
+    if(defender != null){
         return defender.update();
     }
 }
@@ -94,7 +96,8 @@ var attacker = null;
 function Attacker(){
     this.x = 0.5;
     this.speed = 0.01;
-    
+    this.leftPressed =false; 
+    this.rightPressed = false;
     this.update = function(){
         if(this.leftPressed && this.x > 0.05){
             this.x -= this.speed;
@@ -116,31 +119,33 @@ function Attacker(){
     initPack.attacker = this.getInitPack();
 }
 Attacker.update = function(){
-    if(attacker !== null){
+    if(attacker != null){
         return attacker.update();
     }
 }
 
-var earth = null;
 function Earth(){
 	this.x = 0.5;
 	this.y = 1.3;
 	this.radius = 0.5;
-	this.health = 100;
+	this.health = 0.5;
 	
 	this.hit = function(){
-		this.health -= 5;
+	    console.log(this.health);
+		this.health -= .05;
 	}
 	this.update = function(){
-		return this.getUpdatePack();
+	    if(this.health >= 100){
+	        
+	    }else{
+	    this.health += .01 / 25;
+	    }
+        return {health: this.health};
 	}
-	this.getUpdatePack = function(){
-        return {health: this.health,};
-    }
 	
 	earth = this;
-	initPack.earth = this.getInitPack();
 }
+var earth = new Earth();
 
 var Player = {};
 Player.onConnect = function (socket) {
@@ -153,7 +158,7 @@ Player.onConnect = function (socket) {
 
 function Bullet(x){
     this.id = Math.random();
-    this.speed = -0.01;
+    this.speed = 0.01;
     this.x = x;
     this.y = 1;
     
@@ -169,7 +174,7 @@ function Bullet(x){
     
     this.checkForCollision = function(){
         // if goes off screen
-        if(this.y <= 0){
+        if(this.y <= -0.05){
             delete Bullet.list[this.id];
             return true;
         }
@@ -177,9 +182,9 @@ function Bullet(x){
         for(var i in Trash.list){
             var t = Trash.list[i];
             var distance = Math.sqrt((Math.pow((t.x - this.x), 2) + Math.pow(t.y - this.y, 2)));
-            if(distance <= 15){
-                delete Bullet.list[this.id];
-                delete Trash.list[t.id];
+            if(distance <= 0.05){
+                this.x = 2;
+                t.x = 2;
                 return true;
             }
         }
@@ -187,11 +192,13 @@ function Bullet(x){
     };
     
     this.update = function(){
+        this.updatePosition();
        return this.getUpdatePack(); 
     };
 
     this.getUpdatePack = function(){
         return {
+            id: this.id,
             x: this.x,
             y: this.y,
         };
@@ -205,14 +212,15 @@ function Bullet(x){
         };
     };
     
-    initPack.bullets.push(this.getInitPack);
+    Bullet.list[this.id] = this;
+    initPack.bullet.push(this.getInitPack());
 }
 Bullet.update = function(){
-    var bullets = [];
+    var bullet = [];
     for(var b in Bullet.list){
-        bullets.push(b.update());
+        bullet.push(Bullet.list[b].update());
     }
-    return bullets;
+    return bullet;
 };
 Bullet.list = {};
 
@@ -230,14 +238,18 @@ function Trash(x){
     	return this.getUpdatePack(); 
     }
     this.getUpdatePack = function(){
-        return {};
+        return {id: this.id,
+            x: this.x,
+            y: this.y,
+            
+        };
     }
     this.earthCollision = function(){
-    	var dist = Math.sqrt((earth.y - this.y) * (earth.y - this.y) + (earth.x - this.x) + (earth.x - this.x));
-    	if(dist < earth.radius) {
+    	var dist = 1 - this.y;
+    	if(dist <= 0.05) {
     		delete Trash.list[this.id];
-    		earth.hit();
-    	}
+    	earth.hit();
+        }
     }
     this.treeCollision = function(){
     	for(var i in Tree.list){
@@ -254,13 +266,22 @@ function Trash(x){
     	if(this.x < 0 || this.x > 1 || this.y < 0 || this.y > 1)
     		delete Trash.list[this.id];
     }
+    
+    this.getInitPack = function(){
+        return {
+            id: this.id,
+            x: this.x,
+            y: this.y,
+        };
+    }
 
     Trash.list[this.id] = this;
+    initPack.trash.push(this.getInitPack());
 }
 Trash.update = function(){
     var trash = [];
     for(var t in Trash.list){
-        trash.push(t.update());
+        trash.push(Trash.list[t].update());
     }
     return trash;
 }
@@ -302,14 +323,13 @@ function gameTimer() {
 var initPack = {
     attacker: null,
     defender: null,
-    earth: null,
-    bullets: [],
+    bullet: [],
     trash: [],
     trees: []
 };
 
 var removePack = {
-    bullets: [],
+    bullet: [],
     trash: [],
     trees: []
 };
@@ -322,6 +342,7 @@ setInterval(function () {
         attacker: Attacker.update(),
         bullet: Bullet.update(),
         trash: Trash.update(),
+        earth: earth.update(),
     };
     
     io.emit(`init`, initPack);
@@ -332,13 +353,12 @@ setInterval(function () {
     initPack = {
         attacker: null,
         defender: null,
-        earth: null,
-        bullets: [],
+        bullet: [],
         trash: [],
     };
 
     removePack = {
-        bullets: [],
+        bullet: [],
         trash: [],
         trees: []
     };

@@ -58,7 +58,7 @@ $('#right .icon-container').mouseup(function() {
 });
 
 $('#attack .icon-container').click(function() {
-	socket.emit('shoot-trash');
+	socket.emit('attack');
 	fix(this);
 });
 
